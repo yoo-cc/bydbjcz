@@ -4958,6 +4958,9 @@ const VEHICLES = [
   },
 ];
 
+// 初始化展馆字段（将"展馆"映射到"_hall"）
+VEHICLES.forEach(v => { v._hall = v['展馆'] || ''; });
+
 // ═══════════════════════════════════════════════════════
 // Data Persistence (localStorage)
 // ═══════════════════════════════════════════════════════
@@ -5000,6 +5003,8 @@ function loadFromStorage() {
           unique.forEach(v => VEHICLES.push(v));
         }
         rebuildSearchIndex();
+        // 初始化展馆字段
+        VEHICLES.forEach(v => { v._hall = v['展馆'] || ''; });
         console.log('已从 localStorage 恢复 ' + VEHICLES.length + ' 条数据');
         return true;
       }
