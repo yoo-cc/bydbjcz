@@ -209,7 +209,19 @@ body {
 .v-card .v-hl-tag.hl-price { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
 .v-card .v-hl-tag.hl-space { background: rgba(139,92,246,0.12); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
 .v-card .v-hl-tag.hl-default { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
-.v-card .v-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.v-card .v-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.v-card .v-tags { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+.v-card .v-hall-badge {
+  flex-shrink: 0; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.5px; cursor: pointer; transition: var(--transition);
+  border: 1px solid;
+}
+.v-card .v-hall-badge:hover { transform: scale(1.05); }
+.v-card .v-hall-badge.hall-a { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+.v-card .v-hall-badge.hall-b { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+.v-card .v-hall-badge.hall-e { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.3); }
+.v-card .v-hall-badge.hall-w { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.3); }
+.v-card .v-hall-badge.hall-none { background: rgba(100,116,139,0.1); color: var(--text3); border-color: rgba(100,116,139,0.2); }
 
 /* Tags */
 .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; line-height: 1.5; }
@@ -5625,6 +5637,13 @@ function getAttrBadge(attr) {
   return '<span class="v-attr-badge normal">📍 ' + esc(attr) + '</span>';
 }
 
+function getHallBadge(hall, idx) {
+  if(!hall) return '<span class="v-hall-badge hall-none">待定</span>';
+  const zone = hall.charAt(0).toLowerCase();
+  const zoneLabel = {a:'A馆',b:'B馆',e:'E馆',w:'W馆'}[zone] || '';
+  return '<span class="v-hall-badge hall-' + zone + '" onclick="event.stopPropagation();switchTab(4);setTimeout(function(){scrollToHall(\'' + hall + '\')},300)" title="点击跳转到展馆">📍 ' + esc(hall) + '</span>';
+}
+
 function renderTab0Grid() {
   const pages = Math.ceil(tab0Filtered.length / PAGE_SIZE) || 1;
   if(tab0Page >= pages) tab0Page = pages - 1;
@@ -5647,10 +5666,13 @@ function renderTab0Grid() {
         getAttrBadge(v['车展属性']) +
       '</div>' +
       (hlHTML ? '<div class="v-highlights">' + hlHTML + '</div>' : '') +
-      '<div class="v-tags">' +
-        (v['车身类型']?'<span class="tag tag-teal">'+esc(v['车身类型'])+'</span>':'') +
-        (v['动力类型']&&!isNA(v['动力类型'])?'<span class="tag tag-blue">'+esc(v['动力类型'])+'</span>':'') +
-        (v['CLTC纯电续航(km)']&&!isNA(v['CLTC纯电续航(km)'])?'<span class="tag tag-green">'+esc(v['CLTC纯电续航(km)'])+'km</span>':'') +
+      '<div class="v-footer">' +
+        '<div class="v-tags">' +
+          (v['车身类型']?'<span class="tag tag-teal">'+esc(v['车身类型'])+'</span>':'') +
+          (v['动力类型']&&!isNA(v['动力类型'])?'<span class="tag tag-blue">'+esc(v['动力类型'])+'</span>':'') +
+          (v['CLTC纯电续航(km)']&&!isNA(v['CLTC纯电续航(km)'])?'<span class="tag tag-green">'+esc(v['CLTC纯电续航(km)'])+'km</span>':'') +
+        '</div>' +
+        getHallBadge(v._hall, idx) +
       '</div></div>';
   }).join('');
 
